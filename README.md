@@ -67,6 +67,8 @@ on Linux see the [Linux](#linux) section.
 
 ## Quick start
 
+Windows SmartScreen may warn that this is an unrecognised app (it's an unsigned personal tool). Click More info → Run anyway. Verify the download with the SHA-256 in the release notes.
+
 1. Connect the tinySA to the PC **in normal mode** (powered on as usual).
 2. Double-click **`TinySAUpdater.exe`**.
 3. It detects the unit, checks the version, and tells you whether an update is
