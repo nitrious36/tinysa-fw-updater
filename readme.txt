@@ -1,11 +1,11 @@
 ============================================================
   tinySA FIRMWARE UPDATER
-  by ZS6ORB   -   v1.1.1
+  by ZS6ORB   -   v1.1.2
   for tinySA  &  tinySA Ultra
 ============================================================
 
-A console tool (Windows and Linux) that updates the firmware on a
-tinySA or tinySA Ultra spectrum analyser. It talks to the unit
+A console tool (Windows, Linux and macOS - x64 and ARM64) that
+updates the firmware on a tinySA or tinySA Ultra spectrum analyser. It talks to the unit
 over USB, checks whether a newer firmware build is available,
 downloads it, and flashes it over USB DFU - with a clear on-screen
 summary at every step.
@@ -68,18 +68,20 @@ QUICK START
  5. Read the summary, then press [Q] to close.
 
 
-LINUX
+LINUX / MACOS
 ------------------------------------------------------------
- A Linux build is provided as  Linux/TinySAUpdater  (a self-
- contained linux-x64 binary - no .NET install needed). Two
+ Self-contained builds are provided under binaries/linux/ and
+ binaries/macos/ (x64 and arm64 - no .NET install needed). Two
  differences from Windows:
 
   - No driver needed. The kernel's built-in cdc-acm driver
-    handles the tinySA; it appears as /dev/ttyACM0.
+    handles the tinySA; it appears as /dev/ttyACM0 (Linux) or
+    /dev/tty.usbmodem... (macOS).
   - dfu-util comes from your package manager (the tool calls the
     system dfu-util; it does not bundle or download it):
 
-        sudo apt install dfu-util      # or dnf / pacman / brew
+        sudo apt install dfu-util      # Linux (or dnf / pacman)
+        brew install dfu-util          # macOS
         chmod +x TinySAUpdater
         ./TinySAUpdater
 
@@ -87,7 +89,8 @@ LINUX
  dialout group:  sudo usermod -aG dialout $USER  (then re-login).
  Flashing over DFU may need sudo or a udev rule for the STM DFU
  device (VID 0483 PID df11). Serial ports are given as
- --port /dev/ttyACMx.
+ --port /dev/ttyACMx. macOS: if Gatekeeper blocks the unsigned
+ binary, run  xattr -d com.apple.quarantine TinySAUpdater
 
 
 COMMAND-LINE USAGE
@@ -183,7 +186,20 @@ TROUBLESHOOTING
  Wrong COM port chosen
      Pass --port COMx explicitly.
 
- "dfu-util exited with code ..."
+ "dfu-util could not open the DFU device" / "Cannot open DFU
+ device 0483:df11"
+     The unit IS in DFU mode but Windows has no compatible
+     (WinUSB) driver on the "STM32 BOOTLOADER" device. Windows
+     normally fetches ST's driver from Windows Update by itself;
+     on PCs where that is blocked (common on corporate machines),
+     fix it with the unit still in DFU mode: run the bundled
+     Driver\zadig-2.9.exe (or download from zadig.akeo.ie) ->
+     Options -> List All Devices -> select "STM32 BOOTLOADER" ->
+     choose WinUSB -> Install/Replace Driver. Then re-run the
+     updater. (Alternative: Device Manager -> "STM32 BOOTLOADER"
+     -> Update driver -> Search automatically.)
+
+ "dfu-util exited with code ..." (other)
      The unit was probably not in DFU mode - repeat the DFU-mode
      steps and try again.
 
@@ -194,6 +210,16 @@ TROUBLESHOOTING
 
 VERSION HISTORY
 ------------------------------------------------------------
+ 1.1.2  Better flash-failure diagnostics: when dfu-util finds the
+        unit in DFU mode (0483:df11) but cannot OPEN it - a
+        missing WinUSB driver on Windows, permissions on Linux /
+        macOS - the tool now says so and shows the exact fix,
+        instead of wrongly claiming the unit is not in DFU mode.
+        Zadig 2.9 is now bundled in the Driver folder for offline
+        driver installs (thanks to a field report from a corporate
+        PC that blocks Windows Update drivers). Also ships
+        binaries for Windows, Linux and macOS on x64 and ARM64
+        under binaries/<os>/<arch>/.
  1.1.1  Fixes: (1) flashing failed with "Could not find file
         tinySA.bin" when the versioned firmware was already
         downloaded - the generic flash file (tinySA.bin /
@@ -223,6 +249,8 @@ CREDITS
  ZS6ORB - author of this updater.
  Firmware, dfu-util-static.exe and tinySA.py are by the tinySA
  project (Erik Kaashoek) - https://tinysa.org
+ Zadig (bundled driver installer) is by Pete Batard, GPLv3 -
+ https://zadig.akeo.ie
 
  This is a personal tool by Wayne Bevan (ZS6ORB), shared as-is.
  Comments, suggestions or feature ideas? Drop me a mail:
