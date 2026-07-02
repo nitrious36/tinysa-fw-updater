@@ -1,6 +1,6 @@
 # tinySA Firmware Updater
 
-**by ZS6ORB · v1.1.5**
+**by ZS6ORB · v1.1.6**
 
 A console tool for **Windows, Linux and macOS** (x64 and ARM64) that updates the
 firmware on a **tinySA** or **tinySA Ultra** spectrum analyser. It talks to the
@@ -20,7 +20,7 @@ and flashes it over USB DFU — with a clear on-screen summary at every step.
    ║            F I R M W A R E   U P D A T E R            ║
    ║                     by ZS6ORB                        ║
    ╚══════════════════════════════════════════════════════╝
-              v1.1.5    for tinySA  &  tinySA Ultra
+              v1.1.6    for tinySA  &  tinySA Ultra
 ```
 
 ---
@@ -222,6 +222,20 @@ COM port — which is why the version check is done **before** you enter DFU mod
 
 ## Version history
 
+- **1.1.6** — Fixes from a fourth code review. **No more silent downgrades from the
+  server:** the online "latest" is now picked by the firmware's **build number**
+  (the `224` in `…v1.4-224-g…`), with the listing date only as a tie-break, and the
+  update decision compares build numbers too — a re-uploaded *older* `.bin` on the
+  server, or a unit running a build *newer* than the server's, is no longer offered
+  as an "update". A **pre-existing `dfu-util-static.exe` is now validated** (real
+  Windows executable) and re-downloaded if corrupt, instead of crashing the flash
+  step. `--port` no longer swallows a following option (e.g. `--port --yes`) as its
+  value. The **flash prompt only proceeds on ENTER / Y / YES** — `N`, `No`, `Quit`
+  or a typo now skips (previously anything except `Q` flashed). Downloads use a
+  **stall timeout** instead of a 120-second total cap, so a slow-but-moving link is
+  no longer cut off mid-transfer, and a stalled transfer is reported as a network
+  error (not "Unexpected error"); empty (0-byte) downloads are rejected. Help text:
+  corrected the default firmware-folder description.
 - **1.1.5** — Reliability fixes from a code review: **port auto-detect now probes
   every candidate** until one answers as a tinySA (previously only the first port was
   tried, so a radio/GPS on macOS or a stale COM mapping on Windows could hide the

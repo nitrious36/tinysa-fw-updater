@@ -1,6 +1,6 @@
 ============================================================
   tinySA FIRMWARE UPDATER
-  by ZS6ORB   -   v1.1.5
+  by ZS6ORB   -   v1.1.6
   for tinySA  &  tinySA Ultra
 ============================================================
 
@@ -211,6 +211,23 @@ TROUBLESHOOTING
 
 VERSION HISTORY
 ------------------------------------------------------------
+ 1.1.6  Fixes from a fourth code review. No more silent
+        downgrades from the server: the online "latest" is
+        picked by the firmware's BUILD NUMBER (the "224" in
+        v1.4-224-g...), with the listing date only as a tie-
+        break, and the update decision compares build numbers
+        too - a re-uploaded OLDER .bin, or a unit running a
+        build NEWER than the server's, is no longer offered as
+        an "update". A pre-existing dfu-util-static.exe is now
+        validated (real Windows executable) and re-downloaded
+        if corrupt. --port no longer swallows a following
+        option (e.g. --port --yes) as its value. The flash
+        prompt only proceeds on ENTER / Y / YES - N, No, Quit
+        or a typo now skips. Downloads use a stall timeout
+        instead of a 120-second total cap (slow links are no
+        longer cut off mid-transfer) and empty downloads are
+        rejected. Help text: corrected the default firmware-
+        folder description.
  1.1.5  Reliability fixes from a code review: port auto-detect
         now probes EVERY candidate until one answers as a
         tinySA (was: only the first port - a radio/GPS on macOS
