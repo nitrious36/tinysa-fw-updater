@@ -1,6 +1,6 @@
 # tinySA Firmware Updater
 
-**by ZS6ORB · v1.1.3**
+**by ZS6ORB · v1.1.4**
 
 A console tool for **Windows, Linux and macOS** (x64 and ARM64) that updates the
 firmware on a **tinySA** or **tinySA Ultra** spectrum analyser. It talks to the
@@ -20,7 +20,7 @@ and flashes it over USB DFU — with a clear on-screen summary at every step.
    ║            F I R M W A R E   U P D A T E R            ║
    ║                     by ZS6ORB                        ║
    ╚══════════════════════════════════════════════════════╝
-              v1.1.3    for tinySA  &  tinySA Ultra
+              v1.1.4    for tinySA  &  tinySA Ultra
 ```
 
 ---
@@ -222,6 +222,10 @@ COM port — which is why the version check is done **before** you enter DFU mod
 
 ## Version history
 
+- **1.1.4** — Fix: the dfu-util output capture added in 1.1.2 (for the driver
+  diagnostics) was not thread-safe — stdout and stderr arrive on different
+  threads and could, very rarely, garble the captured text and miss the
+  driver-fix detection. Appends are now locked.
 - **1.1.3** — macOS: the tinySA is now auto-detected (`/dev/cu.usbmodem*` — previously
   only Linux port names were scanned, so macOS always needed `--port`). Security:
   server downloads (firmware and `dfu-util-static.exe`) now try **HTTPS first** with

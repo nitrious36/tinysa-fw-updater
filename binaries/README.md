@@ -1,6 +1,6 @@
 # Binaries
 
-Pre-built, self-contained tinySA Firmware Updater executables (v1.1.3). Each binary
+Pre-built, self-contained tinySA Firmware Updater executables (v1.1.4). Each binary
 bundles the .NET runtime, so **no .NET installation is required** — download the one
 for your machine and run it.
 

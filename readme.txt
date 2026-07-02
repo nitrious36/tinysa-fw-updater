@@ -1,6 +1,6 @@
 ============================================================
   tinySA FIRMWARE UPDATER
-  by ZS6ORB   -   v1.1.3
+  by ZS6ORB   -   v1.1.4
   for tinySA  &  tinySA Ultra
 ============================================================
 
@@ -211,6 +211,11 @@ TROUBLESHOOTING
 
 VERSION HISTORY
 ------------------------------------------------------------
+ 1.1.4  Fix: the dfu-util output capture added in 1.1.2 (for
+        the driver diagnostics) was not thread-safe - stdout
+        and stderr arrive on different threads and could, very
+        rarely, garble the captured text and miss the
+        driver-fix detection. Appends are now locked.
  1.1.3  macOS: the tinySA is now auto-detected
         (/dev/cu.usbmodem* - previously only Linux port names
         were scanned, so macOS always needed --port).
