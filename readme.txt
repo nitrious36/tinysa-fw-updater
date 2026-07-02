@@ -194,8 +194,9 @@ TROUBLESHOOTING
      on PCs where that is blocked (common on corporate machines),
      fix it with the unit still in DFU mode: run the bundled
      Driver\zadig-2.9.exe (or download from zadig.akeo.ie) ->
-     Options -> List All Devices -> select "STM32 BOOTLOADER" ->
-     choose WinUSB -> Install/Replace Driver. Then re-run the
+     Options -> List All Devices -> select "STM32 BOOTLOADER"
+     (0483 DF11) -> choose WinUSB -> Install/Replace Driver.
+     Then re-run the
      updater. (Alternative: Device Manager -> "STM32 BOOTLOADER"
      -> Update driver -> Search automatically.)
 
