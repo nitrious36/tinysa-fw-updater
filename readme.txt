@@ -1,6 +1,6 @@
 ============================================================
   tinySA FIRMWARE UPDATER
-  by ZS6ORB   -   v1.1.2
+  by ZS6ORB   -   v1.1.3
   for tinySA  &  tinySA Ultra
 ============================================================
 
@@ -46,8 +46,8 @@ REQUIREMENTS
    next to the .exe. If Windows shows no COM port, install it
    yourself by running (Run as administrator):
        Driver\dpinst_amd64.exe
- - Internet access to http://dfu.tinydevices.org
-   (HTTP only - the server does not use HTTPS).
+ - Internet access to dfu.tinydevices.org (the tool tries
+   HTTPS first and falls back to plain HTTP).
 
  No .NET installation is needed - the build is self-contained and
  single-file. The firmware folder defaults to a "Firmware" folder
@@ -205,12 +205,21 @@ TROUBLESHOOTING
      steps and try again.
 
  Network error
-     The server is HTTP only; check connectivity / firewall to
-     http://dfu.tinydevices.org
+     Check connectivity / firewall to dfu.tinydevices.org
+     (HTTPS first, plain-HTTP fallback - allow both).
 
 
 VERSION HISTORY
 ------------------------------------------------------------
+ 1.1.3  macOS: the tinySA is now auto-detected
+        (/dev/cu.usbmodem* - previously only Linux port names
+        were scanned, so macOS always needed --port).
+        Security: server downloads (firmware and
+        dfu-util-static.exe) now try HTTPS first with plain-
+        HTTP fallback, and the downloaded dfu-util is checked
+        to be a real Windows executable before it is run.
+        Safety: non-interactive (piped / scripted) runs no
+        longer flash without --yes.
  1.1.2  Better flash-failure diagnostics: when dfu-util finds the
         unit in DFU mode (0483:df11) but cannot OPEN it - a
         missing WinUSB driver on Windows, permissions on Linux /

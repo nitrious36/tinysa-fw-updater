@@ -1,6 +1,6 @@
 # tinySA Firmware Updater
 
-**by ZS6ORB · v1.1.2**
+**by ZS6ORB · v1.1.3**
 
 A console tool for **Windows, Linux and macOS** (x64 and ARM64) that updates the
 firmware on a **tinySA** or **tinySA Ultra** spectrum analyser. It talks to the
@@ -20,7 +20,7 @@ and flashes it over USB DFU — with a clear on-screen summary at every step.
    ║            F I R M W A R E   U P D A T E R            ║
    ║                     by ZS6ORB                        ║
    ╚══════════════════════════════════════════════════════╝
-              v1.1.2    for tinySA  &  tinySA Ultra
+              v1.1.3    for tinySA  &  tinySA Ultra
 ```
 
 ---
@@ -75,8 +75,8 @@ See [`binaries/README.md`](binaries/README.md) for per-platform notes.
   root (and inside the Windows download zips) — if Windows doesn't show a COM port,
   install it by running **`Driver\dpinst_amd64.exe`** (right-click → Run as
   administrator). On Linux/macOS no driver is needed (see below).
-- Internet access to `http://dfu.tinydevices.org` (HTTP only — the server does
-  not use HTTPS).
+- Internet access to `dfu.tinydevices.org` (the tool tries HTTPS first and falls
+  back to plain HTTP).
 
 No .NET installation is needed — every build is self-contained and single-file.
 The firmware folder defaults to a `Firmware` folder next to the executable and is
@@ -216,12 +216,18 @@ COM port — which is why the version check is done **before** you enter DFU mod
 | `dfu-util could not open the DFU device` / `Cannot open DFU device 0483:df11` | The unit IS in DFU mode but Windows has no compatible (WinUSB) driver on the "STM32 BOOTLOADER" device — Windows normally fetches ST's driver from Windows Update by itself, but corporate PCs often block that. With the unit still in DFU mode: run the bundled **`Driver\zadig-2.9.exe`** (or [zadig.akeo.ie](https://zadig.akeo.ie)) → Options → List All Devices → select **STM32 BOOTLOADER** (0483 DF11) → choose **WinUSB** → Install/Replace Driver, then re-run the updater. (Alternative: Device Manager → "STM32 BOOTLOADER" → Update driver → Search automatically.) |
 | `dfu-util exited with code …` (other) | The unit was probably not in DFU mode — repeat the DFU-mode steps and try again. |
 | `dfu-util` not found (Linux/macOS) | Install it: `sudo apt install dfu-util` (Linux) or `brew install dfu-util` (macOS). |
-| Network error | The server is **HTTP only**; check connectivity/firewall to `http://dfu.tinydevices.org`. |
+| Network error | Check connectivity/firewall to `dfu.tinydevices.org` (HTTPS first, plain-HTTP fallback — allow both). |
 
 ---
 
 ## Version history
 
+- **1.1.3** — macOS: the tinySA is now auto-detected (`/dev/cu.usbmodem*` — previously
+  only Linux port names were scanned, so macOS always needed `--port`). Security:
+  server downloads (firmware and `dfu-util-static.exe`) now try **HTTPS first** with
+  plain-HTTP fallback, and the downloaded `dfu-util` is validated as a real Windows
+  executable before it is ever run. Safety: when input is non-interactive (piped /
+  scripted), the flash step no longer proceeds without `--yes`.
 - **1.1.2** — Better flash-failure diagnostics: when dfu-util finds the unit in DFU
   mode (`0483:df11`) but cannot **open** it — a missing WinUSB driver on Windows,
   permissions on Linux/macOS — the tool now says so and shows the exact fix,
