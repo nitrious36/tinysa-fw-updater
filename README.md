@@ -222,7 +222,7 @@ COM port — which is why the version check is done **before** you enter DFU mod
 
 ## Version history
 
-- **1.1.6** — Fixes from a fourth code review. **No more silent downgrades from the
+- **1.1.6** — **No more silent downgrades from the
   server:** the online "latest" is now picked by the firmware's **build number**
   (the `224` in `…v1.4-224-g…`), with the listing date only as a tie-break, and the
   update decision compares build numbers too — a re-uploaded *older* `.bin` on the
@@ -236,7 +236,7 @@ COM port — which is why the version check is done **before** you enter DFU mod
   no longer cut off mid-transfer, and a stalled transfer is reported as a network
   error (not "Unexpected error"); empty (0-byte) downloads are rejected. Help text:
   corrected the default firmware-folder description.
-- **1.1.5** — Reliability fixes from a code review: **port auto-detect now probes
+- **1.1.5** — **port auto-detect now probes
   every candidate** until one answers as a tinySA (previously only the first port was
   tried, so a radio/GPS on macOS or a stale COM mapping on Windows could hide the
   unit); **offline mode picks the newest firmware by build number**, not text order
