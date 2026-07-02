@@ -2,10 +2,10 @@
 
 **by ZS6ORB · v1.1.1**
 
-A console tool (**Windows and Linux**) that updates the firmware on a **tinySA**
-or **tinySA Ultra** spectrum analyser. It talks to the unit over USB, checks
-whether a newer firmware build is available, downloads it, and flashes it over
-USB DFU — with a clear on-screen summary at every step.
+A console tool for **Windows, Linux and macOS** (x64 and ARM64) that updates the
+firmware on a **tinySA** or **tinySA Ultra** spectrum analyser. It talks to the
+unit over USB, checks whether a newer firmware build is available, downloads it,
+and flashes it over USB DFU — with a clear on-screen summary at every step.
 
 ```
      _____ _               ____    _
@@ -25,6 +25,23 @@ USB DFU — with a clear on-screen summary at every step.
 
 ---
 
+## Download
+
+Grab the self-contained build for your machine from the **[`binaries/`](binaries/)**
+folder — the .NET runtime is bundled, so **no .NET install is required**:
+
+| OS | x64 | ARM64 |
+|----|-----|-------|
+| **Windows** | [`binaries/windows/x64/TinySAUpdater.exe`](binaries/windows/x64/TinySAUpdater.exe) | [`binaries/windows/arm64/TinySAUpdater.exe`](binaries/windows/arm64/TinySAUpdater.exe) |
+| **Linux** | [`binaries/linux/x64/TinySAUpdater`](binaries/linux/x64/TinySAUpdater) | [`binaries/linux/arm64/TinySAUpdater`](binaries/linux/arm64/TinySAUpdater) |
+| **macOS** | [`binaries/macos/x64/TinySAUpdater`](binaries/macos/x64/TinySAUpdater) | [`binaries/macos/arm64/TinySAUpdater`](binaries/macos/arm64/TinySAUpdater) |
+
+Prefer a packaged download? Each platform also has a zip on the
+[latest release](https://github.com/nitrious36/tinysa-fw-updater/releases/latest).
+See [`binaries/README.md`](binaries/README.md) for per-platform notes.
+
+---
+
 ## What it does
 
 1. **Checks internet connectivity** and that the firmware server is reachable,
@@ -38,10 +55,11 @@ USB DFU — with a clear on-screen summary at every step.
    official server. It compares the **version string**, not file dates.
 5. **Downloads only when newer.** If the unit is already current, it stops and
    says so (use `--force` to re-flash anyway).
-6. **Fetches `dfu-util-static.exe`** automatically if it isn't in the firmware folder.
+6. **Fetches `dfu-util`** automatically on Windows (bundled `dfu-util-static.exe`);
+   on Linux/macOS it uses the system `dfu-util` from your package manager.
 7. **Renames** the download to `tinySA4.bin` / `tinySA.bin` for flashing, while
    keeping the original versioned `.bin` as an on-disk record.
-8. **Flashes** with `dfu-util-static.exe -a 0 -s 0x08000000:leave -D <bin>`,
+8. **Flashes** with `dfu-util -a 0 -s 0x08000000:leave -D <bin>`,
    streaming the live output.
 9. **Prints a summary** of every check and **stays open** until you press `[Q]`.
 
@@ -49,28 +67,30 @@ USB DFU — with a clear on-screen summary at every step.
 
 ## Requirements
 
-- Windows 10/11 (64-bit).
+- **Windows** 10/11 (x64 or ARM64), a modern 64-bit **Linux** distro (x64/ARM64),
+  or **macOS** 11+ (Intel or Apple Silicon).
 - The tinySA connected by USB.
-- The **STMicroelectronics Virtual COM Port driver** so the unit shows as a COM
-  port. A copy is bundled in the **`Driver\`** folder next to the .exe — if
-  Windows doesn't show a COM port, install it yourself by running
-  **`Driver\dpinst_amd64.exe`** (right-click → Run as administrator).
+- **Windows only:** the **STMicroelectronics Virtual COM Port driver** so the unit
+  shows as a COM port. A copy is bundled in the **`Driver\`** folder at the repo
+  root (and inside the Windows download zips) — if Windows doesn't show a COM port,
+  install it by running **`Driver\dpinst_amd64.exe`** (right-click → Run as
+  administrator). On Linux/macOS no driver is needed (see below).
 - Internet access to `http://dfu.tinydevices.org` (HTTP only — the server does
   not use HTTPS).
 
-No .NET installation is needed — the build is self-contained and single-file.
+No .NET installation is needed — every build is self-contained and single-file.
 The firmware folder defaults to a `Firmware` folder next to the executable and is
-created automatically if it doesn't exist. The driver above is **Windows-only**;
-on Linux see the [Linux](#linux) section.
+created automatically if it doesn't exist.
 
 ---
 
-## Quick start
+## Quick start (Windows)
 
 Windows SmartScreen may warn that this is an unrecognised app (it's an unsigned personal tool). Click More info → Run anyway. Verify the download with the SHA-256 in the release notes.
 
 1. Connect the tinySA to the PC **in normal mode** (powered on as usual).
-2. Double-click **`TinySAUpdater.exe`**.
+2. Double-click **`binaries\windows\x64\TinySAUpdater.exe`** (or the `arm64` build
+   on an ARM PC).
 3. It detects the unit, checks the version, and tells you whether an update is
    needed.
 4. If an update is available, it downloads it and asks you to put the unit in
@@ -81,8 +101,8 @@ Windows SmartScreen may warn that this is an unrecognised app (it's an unsigned 
 
 ## Linux
 
-A Linux build is provided as **`Linux/TinySAUpdater`** (a self-contained `linux-x64`
-binary — no .NET install needed). Linux differs from Windows in two ways:
+Linux builds are under **`binaries/linux/x64/`** and **`binaries/linux/arm64/`**
+(self-contained — no .NET install needed). Linux differs from Windows in two ways:
 
 - **No driver needed** — the kernel's built-in `cdc-acm` driver handles the tinySA.
   The unit appears as `/dev/ttyACM0`.
@@ -90,7 +110,7 @@ binary — no .NET install needed). Linux differs from Windows in two ways:
   `dfu-util` (it does not bundle or download it):
 
   ```bash
-  sudo apt install dfu-util        # Debian/Ubuntu  (or dnf/pacman/brew)
+  sudo apt install dfu-util        # Debian/Ubuntu  (or dnf/pacman)
   chmod +x TinySAUpdater
   ./TinySAUpdater
   ```
@@ -102,6 +122,26 @@ Serial ports are given as `--port /dev/ttyACMx`.
 
 ---
 
+## macOS
+
+macOS builds are under **`binaries/macos/x64/`** (Intel) and
+**`binaries/macos/arm64/`** (Apple Silicon) — self-contained, no .NET install
+needed. As on Linux, no driver is required and the tool uses the **system
+`dfu-util`**:
+
+```bash
+brew install dfu-util
+chmod +x TinySAUpdater
+xattr -d com.apple.quarantine TinySAUpdater   # clear Gatekeeper quarantine (unsigned)
+./TinySAUpdater
+```
+
+The tinySA appears as `/dev/tty.usbmodem…`; pass it with `--port` if auto-detect
+misses it. The binary is unsigned — if Gatekeeper still blocks it, allow it under
+**System Settings → Privacy & Security**.
+
+---
+
 ## Command-line usage
 
 ```
@@ -110,7 +150,7 @@ TinySAUpdater [folder] [options]
 
 | Option | Meaning |
 |--------|---------|
-| `[folder]`        | Firmware folder (default: a `Firmware` folder next to the .exe) |
+| `[folder]`        | Firmware folder (default: a `Firmware` folder next to the executable) |
 | `-u`, `--ultra`   | Force tinySA Ultra (skip auto-detect / menu) |
 | `-b`, `--basic`   | Force tinySA basic (skip auto-detect / menu) |
 | `--port COMx`     | Use this serial port instead of auto-detecting |
@@ -170,10 +210,11 @@ COM port — which is why the version check is done **before** you enter DFU mod
 
 | Problem | Fix |
 |---------|-----|
-| "No tinySA found on a COM port" | Connect the unit in normal mode; install the bundled STM VCP driver by running `Driver\dpinst_amd64.exe` as administrator; or pass `--port COMx`. |
+| "No tinySA found on a COM port" | Connect the unit in normal mode; on Windows install the bundled STM VCP driver by running `Driver\dpinst_amd64.exe` as administrator; or pass `--port COMx`. |
 | Unit is already in DFU mode (blank screen) | Run with `--no-check --ultra` (or `--basic`) to flash without the version check. |
-| Wrong COM port chosen | Pass `--port COMx` explicitly. |
+| Wrong port chosen | Pass `--port COMx` (Windows) or `--port /dev/tty…` (Linux/macOS) explicitly. |
 | `dfu-util exited with code …` | The unit was probably not in DFU mode — repeat the DFU-mode steps and try again. |
+| `dfu-util` not found (Linux/macOS) | Install it: `sudo apt install dfu-util` (Linux) or `brew install dfu-util` (macOS). |
 | Network error | The server is **HTTP only**; check connectivity/firewall to `http://dfu.tinydevices.org`. |
 
 ---
@@ -190,7 +231,9 @@ COM port — which is why the version check is done **before** you enter DFU mod
   New: on startup (in the `[1/5]` step) the app checks the project's GitHub
   Releases and reports whether this is the latest version, or shows an "update
   available" notice with the download link when a newer release exists
-  (`--no-update-check` to skip).
+  (`--no-update-check` to skip). Distribution: prebuilt self-contained binaries
+  for **Windows, Linux and macOS** (x64 + ARM64) are provided under
+  `binaries/<os>/<arch>/`.
 - **1.1.0** — Internet connectivity preflight; offline flash of already-downloaded
   firmware; serial version check + model auto-detection; version-string comparison
   (not dates); downloads only when newer; end-of-run summary; window stays open
