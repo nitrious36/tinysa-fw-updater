@@ -1,6 +1,6 @@
 # tinySA Firmware Updater
 
-**by ZS6ORB · v1.1.4**
+**by ZS6ORB · v1.1.5**
 
 A console tool for **Windows, Linux and macOS** (x64 and ARM64) that updates the
 firmware on a **tinySA** or **tinySA Ultra** spectrum analyser. It talks to the
@@ -20,7 +20,7 @@ and flashes it over USB DFU — with a clear on-screen summary at every step.
    ║            F I R M W A R E   U P D A T E R            ║
    ║                     by ZS6ORB                        ║
    ╚══════════════════════════════════════════════════════╝
-              v1.1.4    for tinySA  &  tinySA Ultra
+              v1.1.5    for tinySA  &  tinySA Ultra
 ```
 
 ---
@@ -222,6 +222,15 @@ COM port — which is why the version check is done **before** you enter DFU mod
 
 ## Version history
 
+- **1.1.5** — Reliability fixes from a code review: **port auto-detect now probes
+  every candidate** until one answers as a tinySA (previously only the first port was
+  tried, so a radio/GPS on macOS or a stale COM mapping on Windows could hide the
+  unit); **offline mode picks the newest firmware by build number**, not text order
+  (a `…-89` file no longer beats `…-224`); a wedged `dfu-util` is terminated after
+  3 minutes instead of hanging; EOF (Ctrl+Z/Ctrl+D) at the flash prompt now cancels
+  instead of flashing; a bad `[folder]` argument no longer crashes silently; `--port`
+  with no value is reported; and the self-update check no longer nags on a
+  non-numeric release tag.
 - **1.1.4** — Fix: the dfu-util output capture added in 1.1.2 (for the driver
   diagnostics) was not thread-safe — stdout and stderr arrive on different
   threads and could, very rarely, garble the captured text and miss the

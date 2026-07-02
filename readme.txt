@@ -1,6 +1,6 @@
 ============================================================
   tinySA FIRMWARE UPDATER
-  by ZS6ORB   -   v1.1.4
+  by ZS6ORB   -   v1.1.5
   for tinySA  &  tinySA Ultra
 ============================================================
 
@@ -211,6 +211,17 @@ TROUBLESHOOTING
 
 VERSION HISTORY
 ------------------------------------------------------------
+ 1.1.5  Reliability fixes from a code review: port auto-detect
+        now probes EVERY candidate until one answers as a
+        tinySA (was: only the first port - a radio/GPS on macOS
+        or a stale COM mapping on Windows could hide the unit);
+        offline mode picks the newest firmware by build number,
+        not text order (a "-89" file no longer beats "-224"); a
+        wedged dfu-util is terminated after 3 minutes; EOF at
+        the flash prompt cancels instead of flashing; a bad
+        [folder] argument no longer crashes; --port with no
+        value is reported; the self-update check no longer nags
+        on a non-numeric release tag.
  1.1.4  Fix: the dfu-util output capture added in 1.1.2 (for
         the driver diagnostics) was not thread-safe - stdout
         and stderr arrive on different threads and could, very
